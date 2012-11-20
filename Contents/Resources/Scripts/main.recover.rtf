@@ -1,0 +1,2870 @@
+{\rtf1\ansi\ansicpg932\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fnil\fcharset0 Verdana;\f1\fnil\fcharset128 HiraKakuProN-W3;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red64\green128\blue0;\red0\green22\blue176;
+\red0\green0\blue255;\red76\green78\blue78;\red108\green5\blue211;\red74\green30\blue127;}
+\deftab480
+\pard\pardeftab480\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf2 property
+\b0  \cf3 XList\cf2  : 
+\b \cf4 module
+\b0 \cf2 \
+
+\b property
+\b0  \cf3 HTMLElement\cf2  : 
+\b \cf4 module
+\b0 \cf2 \
+
+\b property
+\b0  \cf3 XText\cf2  : 
+\b \cf4 module
+\b0 \cf2 \
+
+\b property
+\b0  \cf3 XCharacterSet\cf2  : 
+\b \cf4 module
+\b0 \cf2 \
+
+\b property
+\b0  \cf3 HTMLElementFormatter\cf2  : 
+\b \cf4 module
+\b0 \cf2 \
+\
+
+\b property
+\b0  \cf3 _line_end\cf2  : 
+\b \cf4 ASCII character
+\b0 \cf2  10\
+
+\b property
+\b0  \cf3 _empty_line\cf2  : 
+\i \cf5 missing value
+\i0 \cf2 \
+
+\b property
+\b0  \cf3 _numChars\cf2  : 
+\i \cf5 missing value
+\i0 \cf2 \
+\cf6 --property _ascii_chars : missing value\cf2 \
+\
+
+\b on
+\b0  
+\b \cf4 module loaded
+\b0 \cf2  \cf4 by\cf2  \cf3 loader\cf2 \
+	
+\b set
+\b0  
+\b my
+\b0  \cf3 _empty_line\cf2  
+\b to
+\b0  \cf3 XText\cf2 's \cf3 make_with\cf2 ("")\
+	
+\b set
+\b0  
+\b my
+\b0  \cf3 _numChars\cf2  
+\b to
+\b0  \cf3 XCharacterSet\cf2 's \cf3 make_numerics\cf2 ()\
+	\cf6 --set my _ascii_chars to XCharacterSet's make_graphic_chars()\cf2 \
+
+\b end
+\b0  
+\b \cf4 module loaded
+\b0 \cf2 \
+\
+\
+
+\b script
+\b0  \cf3 HTMLFormatter\cf2 \
+	
+\b on
+\b0  \cf3 is_oneline_comment\cf2 (\cf3 a_text\cf2 )\
+		
+\b if
+\b0  \cf3 a_text\cf2 's \cf3 starts_with\cf2 ("<!--") 
+\b and
+\b0  \cf3 a_text\cf2 's \cf3 ends_with\cf2 ("-->") 
+\b then
+\b0 \
+			
+\b if
+\b0  \cf3 a_text\cf2 's \cf3 offset_of\cf2 ("-->") 
+\b is
+\b0  ((\cf7 length\cf2  
+\b of
+\b0  \cf3 a_text\cf2 ) - 2) 
+\b then
+\b0 \
+				
+\b return
+\b0  \cf8 true\cf2 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b return
+\b0  \cf8 false\cf2 \
+	
+\b end
+\b0  \cf3 is_oneline_comment\cf2 \
+	\
+	
+\b on
+\b0  \cf3 format_heading\cf2 (\cf3 heading_obj\cf2 )\
+		
+\b set
+\b0  \cf3 h_tag\cf2  
+\b to
+\b0  "h" & \cf3 level\cf2  
+\b of
+\b0  \cf3 heading_obj\cf2 \
+		
+\b set
+\b0  \cf3 a_h\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 HTMLElement\cf2 's \cf3 make_with\cf2 (\cf3 h_tag\cf2 , \{\})\
+		
+\b set
+\b0  \cf3 head_id\cf2  
+\b to
+\b0  (\cf7 contents\cf2  
+\b of
+\b0  \cf3 heading_obj\cf2 )'s \cf3 replace\cf2 (" ", "")\
+		\cf6 (*\
+		try\
+			set head_id to URI Escape head_id\
+		end try\
+		*)\cf2 \
+		\cf3 a_h\cf2 's \cf3 push_element_with\cf2 ("a", \{\{"id", \cf3 head_id\cf2 \}\})\
+		\cf3 a_h\cf2 's \cf3 push_content\cf2 (\cf7 contents\cf2  
+\b of
+\b0  \cf3 heading_obj\cf2 )\
+		
+\b return
+\b0  \cf3 a_h\cf2 's \cf3 as_html\cf2 ()\
+	
+\b end
+\b0  \cf3 format_heading\cf2 \
+	\
+	
+\b on
+\b0  \cf3 format_verbatim\cf2 (\cf3 a_list\cf2 )\
+		
+\b if
+\b0  \cf7 length\cf2  
+\b of
+\b0  \cf3 a_list\cf2  
+\b is
+\b0  1 
+\b then
+\b0 \
+			
+\b set
+\b0  \cf3 a_record\cf2  
+\b to
+\b0  
+\i \cf5 item
+\i0 \cf2  1 
+\b of
+\b0  \cf3 a_list\cf2 \
+			
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 a_record\cf2 's \cf3 blockText\cf2 \
+			
+\b if
+\b0  \cf3 is_oneline_comment\cf2 (\cf3 a_text\cf2 ) 
+\b then
+\b0 \
+				
+\b return
+\b0  \cf3 a_record\cf2 's \cf3 originalText\cf2 's \cf3 as_unicode\cf2 ()\
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b if
+\b0 \
+		\
+		
+\b set
+\b0  \cf3 a_pre\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 HTMLElement\cf2 's \cf3 make_with\cf2 ("pre", \{\})\
+		
+\b repeat
+\b0  
+\b with
+\b0  \cf3 a_record\cf2  
+\b in
+\b0  \cf3 a_list\cf2 \
+			\cf3 a_pre\cf2 's \cf3 push_content\cf2 (\cf3 a_record\cf2 's \cf3 originalText\cf2 )\
+			\cf3 a_pre\cf2 's \cf3 push_content\cf2 (\cf3 _line_end\cf2 )\
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		
+\b return
+\b0  \cf3 a_pre\cf2 's \cf3 as_html\cf2 ()\
+	
+\b end
+\b0  \cf3 format_verbatim\cf2 \
+	\
+	
+\b on
+\b0  \cf3 format_paragraphs\cf2 (\cf3 a_list\cf2 )\
+		\cf6 --log "start format_paragraphs"\cf2 \
+		
+\b set
+\b0  \cf3 par_container\cf2  
+\b to
+\b0  
+\b \cf5 make
+\b0 \cf2  
+\b my
+\b0  \cf3 HTMLElement\cf2 \
+		
+\b set
+\b0  \cf3 a_par\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 HTMLElement\cf2 's \cf3 make_with\cf2 ("p", \{\})\
+		\
+		
+\b script
+\b0  \cf3 ParagraphAppender\cf2 \
+			
+\b if
+\b0  (\cf3 a_par\cf2 's \cf3 contents_ref\cf2 ()'s \cf3 count_items\cf2 () > 0) 
+\b then
+\b0 \
+				\cf3 par_container\cf2 's \cf3 push_content\cf2 (\cf3 a_par\cf2 )\
+				
+\b set
+\b0  \cf3 a_par\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 HTMLElement\cf2 's \cf3 make_with\cf2 ("p", \{\})\
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b script
+\b0 \
+		\
+		
+\b repeat
+\b0  
+\b with
+\b0  \cf3 a_record\cf2  
+\b in
+\b0  \cf3 a_list\cf2 \
+			
+\b if
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 a_record\cf2  
+\b is
+\b0  "empty" 
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 a_line\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 _empty_line\cf2 \
+			
+\b else
+\b0 \
+				
+\b set
+\b0  \cf3 a_line\cf2  
+\b to
+\b0  \cf3 blockText\cf2  
+\b of
+\b0  \cf3 a_record\cf2 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+			\
+			
+\b if
+\b0  \cf3 a_line\cf2 's \cf3 equal_to\cf2 ("") 
+\b then
+\b0 \
+				
+\b \cf5 run
+\b0 \cf2  \cf3 ParagraphAppender\cf2 \
+			
+\b else
+\b0  
+\b if
+\b0  \cf3 is_oneline_comment\cf2 (\cf3 a_line\cf2 ) 
+\b then
+\b0 \
+				
+\b \cf5 run
+\b0 \cf2  \cf3 ParagraphAppender\cf2 \
+				\cf3 par_container\cf2 's \cf3 push_content\cf2 (\cf3 a_line\cf2 )\
+			
+\b else
+\b0 \
+				\cf3 a_par\cf2 's \cf3 push_content\cf2 (\cf3 a_line\cf2 )\
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		\
+		
+\b \cf5 run
+\b0 \cf2  \cf3 ParagraphAppender\cf2 \
+		
+\b return
+\b0  \cf3 par_container\cf2 's \cf3 as_html\cf2 ()\
+	
+\b end
+\b0  \cf3 format_paragraphs\cf2 \
+	\
+	
+\b on
+\b0  \cf3 list_begin\cf2 (\cf3 a_kind\cf2 )\
+		
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  "itemize" 
+\b then
+\b0 \
+			
+\b return
+\b0  "<ul>"\
+		
+\b else
+\b0  
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  "enumerate" 
+\b then
+\b0 \
+			
+\b return
+\b0  "<ol>"\
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  \cf3 list_begin\cf2 \
+	\
+	
+\b on
+\b0  \cf3 list_end\cf2 (\cf3 a_kind\cf2 )\
+		
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  "itemize" 
+\b then
+\b0 \
+			
+\b return
+\b0  "</ul>"\
+		
+\b else
+\b0  
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  "enumerate" 
+\b then
+\b0 \
+			
+\b return
+\b0  "</ol>"\
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  \cf3 list_end\cf2 \
+	\
+	
+\b on
+\b0  \cf3 format_list\cf2 (\cf3 list_container\cf2 )\
+		
+\b set
+\b0  \cf3 output\cf2  
+\b to
+\b0  \{\cf3 list_container\cf2 's \cf3 _indentText\cf2  & \cf3 list_begin\cf2 (\cf3 list_container\cf2 's \cf3 list_kind\cf2 ())\}\
+		
+\b set
+\b0  \cf3 member_list\cf2  
+\b to
+\b0  \cf3 list_container\cf2 's \cf3 members\cf2 ()\
+		
+\b repeat
+\b0  
+\b while
+\b0  \cf3 member_list\cf2 's \cf3 has_next\cf2 ()\
+			
+\b set
+\b0  \cf3 an_item\cf2  
+\b to
+\b0  \cf3 member_list\cf2 's \cf3 next\cf2 ()\
+			
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 output\cf2  
+\b to
+\b0  \cf3 an_item\cf2 's \cf3 convert\cf2 (
+\b me
+\b0 )\
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		\
+		
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 output\cf2  
+\b to
+\b0  (\cf3 list_container\cf2 's \cf3 _indentText\cf2  & \cf3 list_end\cf2 (\cf3 list_container\cf2 's \cf3 list_kind\cf2 ()))\
+		
+\b return
+\b0  \cf3 output\cf2 \
+	
+\b end
+\b0  \cf3 format_list\cf2 \
+	\
+	
+\b on
+\b0  \cf3 format_list_item\cf2 (\cf3 a_list\cf2 , \cf3 indent_text\cf2 )\
+		
+\b \cf5 log
+\b0 \cf2  "start format_list_item in HTMLFormatter"\
+		
+\b set
+\b0  \cf3 output\cf2  
+\b to
+\b0  \{\}\
+		
+\b set
+\b0  \cf3 formatter\cf2  
+\b to
+\b0  
+\b me
+\b0 \
+		
+\b script
+\b0  \cf3 ListItemProcessor\cf2 \
+			
+\b on
+\b0  \cf3 do\cf2 (\cf3 an_item\cf2 , \cf3 beg_text\cf2 )\
+				
+\b set
+\b0  \cf3 a_class\cf2  
+\b to
+\b0  
+\i \cf5 class
+\i0 \cf2  
+\b of
+\b0  \cf3 an_item\cf2 \
+				
+\b if
+\b0  \cf3 a_class\cf2  
+\b is
+\b0  
+\i \cf5 script
+\i0 \cf2  
+\b then
+\b0 \
+					
+\b try
+\b0 \
+						
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  \cf3 an_item\cf2 's \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+					
+\b on
+\b0  
+\b error
+\b0  \cf3 msg\cf2 \
+						\cf6 --log msg\cf2 \
+						
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  \cf3 an_item\cf2 's \cf3 as_unicode\cf2 ()\
+					
+\b end
+\b0  
+\b try
+\b0 \
+					
+\b set
+\b0  \cf3 a_class\cf2  
+\b to
+\b0  
+\i \cf5 class
+\i0 \cf2  
+\b of
+\b0  \cf3 a_result\cf2 \
+					
+\b if
+\b0  \cf3 a_class\cf2  
+\b is
+\b0  
+\i \cf5 list
+\i0 \cf2  
+\b then
+\b0 \
+						
+\b set
+\b0  
+\b first
+\b0  
+\i \cf5 item
+\i0 \cf2  
+\b of
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  \cf3 beg_text\cf2  & 
+\b first
+\b0  
+\i \cf5 item
+\i0 \cf2  
+\b of
+\b0  \cf3 a_result\cf2 \
+					
+\b else
+\b0 \
+						
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  \cf3 beg_text\cf2  & \cf3 a_result\cf2 \
+					
+\b end
+\b0  
+\b if
+\b0 \
+				
+\b else
+\b0 \
+					
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  \cf3 beg_text\cf2  & \cf3 an_item\cf2 \
+				
+\b end
+\b0  
+\b if
+\b0 \
+				
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 output\cf2  
+\b to
+\b0  \cf3 a_result\cf2 \
+			
+\b end
+\b0  \cf3 do\cf2 \
+		
+\b end
+\b0  
+\b script
+\b0 \
+		\
+		
+\b set
+\b0  \cf3 a_xlist\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 XList\cf2 's \cf3 make_with\cf2 (\cf3 a_list\cf2 )\
+		
+\b set
+\b0  \cf3 an_item\cf2  
+\b to
+\b0  \cf3 ListItemProcessor\cf2 's \cf3 do\cf2 (\cf3 a_xlist\cf2 's \cf3 next\cf2 (), \cf3 indent_text\cf2  & "<li>")\
+		
+\b repeat
+\b0  
+\b while
+\b0  (\cf3 a_xlist\cf2 's \cf3 has_next\cf2 ())\
+			\cf3 ListItemProcessor\cf2 's \cf3 do\cf2 (\cf3 a_xlist\cf2 's \cf3 next\cf2 (), \cf3 indent_text\cf2 )\
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		
+\b set
+\b0  
+\b last
+\b0  
+\i \cf5 item
+\i0 \cf2  
+\b of
+\b0  \cf3 output\cf2  
+\b to
+\b0  
+\b last
+\b0  
+\i \cf5 item
+\i0 \cf2  
+\b of
+\b0  \cf3 output\cf2  & "</li>"\
+		\cf6 --log "end format_list_item"\cf2 \
+		
+\b return
+\b0  \cf3 output\cf2 \
+	
+\b end
+\b0  \cf3 format_list_item\cf2 \
+
+\b end
+\b0  
+\b script
+\b0 \
+\
+
+\b script
+\b0  \cf3 XHTMLFormatter\cf2 \
+	
+\b property
+\b0  \cf7 parent\cf2  : \cf3 HTMLFormatter\cf2 \
+	\cf6 (*\
+	on format_list_item(a_list, indent_text)\
+		set first item of a_list to indent_text & "<li>" & first item of a_list\
+		set last item of a_list to last item of a_list & "</li>"\
+		return a_list\
+	end format_list_item\
+	*)\cf2 \
+
+\b end
+\b0  
+\b script
+\b0 \
+\
+
+\b script
+\b0  \cf3 LaTeXFormatter\cf2 \
+	\
+
+\b end
+\b0  
+\b script
+\b0 \
+\
+\cf6 --property Formatter : missing value\cf2 \
+
+\b property
+\b0  \cf3 _formatter\cf2  : \cf3 XHTMLFormatter\cf2 \
+\
+
+\b on
+\b0  \cf3 check_line_type\cf2 (\cf3 line_record\cf2 )\
+	\cf3 calc_indent_level\cf2 (\cf3 line_record\cf2 )\
+	
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 blockText\cf2  
+\b of
+\b0  \cf3 line_record\cf2 \
+	
+\b if
+\b0  \cf3 a_text\cf2 's \cf3 starts_with\cf2 ("*") 
+\b then
+\b0 \
+		
+\b set
+\b0  \cf3 a_lineKind\cf2  
+\b to
+\b0  "itemize"\
+		
+\b if
+\b0  \cf7 length\cf2  
+\b of
+\b0  \cf3 a_text\cf2  > 1 
+\b then
+\b0 \
+			
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 a_text\cf2 's \cf3 text_in_range\cf2 (2, -1)\
+			
+\b set
+\b0  \{\cf3 dummy\cf2 , \cf3 a_text\cf2 \} 
+\b to
+\b0  \cf3 a_text\cf2 's \cf3 strip_beginning\cf2 ()\
+			
+\b set
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  (\cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2 ) + 1\
+		
+\b else
+\b0 \
+			
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 _empty_line\cf2 \
+		
+\b end
+\b0  
+\b if
+\b0 \
+		\
+	
+\b else
+\b0  
+\b if
+\b0  \cf3 a_text\cf2 's \cf3 starts_with\cf2 ("(") 
+\b then
+\b0 \
+		
+\b repeat
+\b0  
+\b with
+\b0  \cf3 ith\cf2  
+\b from
+\b0  2 
+\b to
+\b0  \cf7 length\cf2  
+\b of
+\b0  \cf3 a_text\cf2 \
+			
+\b set
+\b0  \cf3 a_char\cf2  
+\b to
+\b0  
+\i \cf5 character
+\i0 \cf2  \cf3 ith\cf2  
+\b of
+\b0  \cf3 a_text\cf2 \
+			
+\b if
+\b0  
+\b not
+\b0  
+\b my
+\b0  \cf3 _numChars\cf2 's \cf3 is_member\cf2 (\cf3 a_char\cf2 ) 
+\b then
+\b0 \
+				
+\b if
+\b0  \cf3 a_char\cf2  
+\b is
+\b0  ")" 
+\b then
+\b0 \
+					
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 a_text\cf2 's \cf3 text_in_range\cf2 (\cf3 ith\cf2  + 1, -1)\
+					
+\b set
+\b0  \{\cf3 dummy\cf2 , \cf3 a_text\cf2 \} 
+\b to
+\b0  \cf3 a_text\cf2 's \cf3 strip_beginning\cf2 ()\
+					
+\b set
+\b0  \cf3 a_lineKind\cf2  
+\b to
+\b0  "enumerate"\
+					
+\b set
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  (\cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2 ) + 1\
+				
+\b else
+\b0 \
+					
+\b if
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2  > 0 
+\b then
+\b0 \
+						
+\b set
+\b0  \cf3 a_lineKind\cf2  
+\b to
+\b0  "verbatim"\
+					
+\b else
+\b0 \
+						
+\b set
+\b0  \cf3 a_lineKind\cf2  
+\b to
+\b0  "cline"\
+					
+\b end
+\b0  
+\b if
+\b0 \
+				
+\b end
+\b0  
+\b if
+\b0 \
+				
+\b exit
+\b0  
+\b repeat
+\b0 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+	
+\b else
+\b0 \
+		
+\b if
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2  > 0 
+\b then
+\b0 \
+			
+\b set
+\b0  \cf3 a_lineKind\cf2  
+\b to
+\b0  "verbatim"\
+		
+\b else
+\b0 \
+			
+\b set
+\b0  \cf3 a_lineKind\cf2  
+\b to
+\b0  "cline"\
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  
+\b if
+\b0 \
+	\
+	
+\b set
+\b0  \cf3 blockText\cf2  
+\b of
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  \cf3 a_text\cf2 \
+	
+\b set
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  \cf3 a_lineKind\cf2 \
+	
+\b return
+\b0  \cf3 line_record\cf2 \
+
+\b end
+\b0  \cf3 check_line_type\cf2 \
+\
+
+\b on
+\b0  \cf3 indent_weight_char\cf2 (\cf3 a_char\cf2 )\
+	
+\b if
+\b0  \cf3 a_char\cf2  
+\b is
+\b0  \cf7 space\cf2  
+\b then
+\b0 \
+		
+\b return
+\b0  1\
+	
+\b else
+\b0  
+\b if
+\b0  \cf3 a_char\cf2  
+\b is
+\b0  \cf7 tab\cf2  
+\b then
+\b0 \
+		
+\b return
+\b0  4\
+		\cf6 (*\
+	else if _ascii_chars's is_member(a_char) then\
+		return 1\
+*)\cf2 \
+	
+\b else
+\b0 \
+		
+\b return
+\b0  2\
+	
+\b end
+\b0  
+\b if
+\b0 \
+
+\b end
+\b0  \cf3 indent_weight_char\cf2 \
+\
+
+\b on
+\b0  \cf3 indent_weight_text\cf2 (\cf3 a_text\cf2 )\
+	
+\b set
+\b0  \cf3 a_level\cf2  
+\b to
+\b0  0\
+	
+\b repeat
+\b0  
+\b with
+\b0  \cf3 ith\cf2  
+\b from
+\b0  1 
+\b to
+\b0  \cf7 length\cf2  
+\b of
+\b0  \cf3 a_text\cf2 \
+		
+\b set
+\b0  \cf3 a_char\cf2  
+\b to
+\b0  
+\i \cf5 character
+\i0 \cf2  \cf3 ith\cf2  
+\b of
+\b0  \cf3 a_text\cf2 \
+		
+\b set
+\b0  \cf3 a_level\cf2  
+\b to
+\b0  \cf3 a_level\cf2  + \cf3 indent_weight_char\cf2 (\cf3 a_char\cf2 )\
+	
+\b end
+\b0  
+\b repeat
+\b0 \
+	
+\b return
+\b0  \cf3 a_level\cf2 \
+
+\b end
+\b0  \cf3 indent_weight_text\cf2 \
+\
+
+\b on
+\b0  \cf3 calc_indent_level\cf2 (\cf3 line_record\cf2 )\
+	
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 indentText\cf2  
+\b of
+\b0  \cf3 line_record\cf2 \
+	
+\b set
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  \cf3 indent_weight_text\cf2 (\cf3 a_text\cf2 )\
+
+\b end
+\b0  \cf3 calc_indent_level\cf2 \
+\
+
+\b on
+\b0  \cf3 parse_line\cf2 (\cf3 a_line\cf2 )\
+	
+\b if
+\b0  \cf3 a_line\cf2 's \cf3 equal_to\cf2 ("") 
+\b then
+\b0 \
+		
+\b set
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  \{\cf3 indentText\cf2 :\cf3 a_line\cf2 , \cf3 lineKind\cf2 :"empty", \cf3 originalText\cf2 :\cf3 a_line\cf2 , \cf3 indentLevel\cf2 :0\}\
+	
+\b else
+\b0 \
+		\cf6 --set a_line to XText's make_with(a_line)\cf2 \
+		
+\b set
+\b0  \{\cf3 a_indent_text\cf2 , \cf3 a_block_text\cf2 \} 
+\b to
+\b0  \cf3 a_line\cf2 's \cf3 strip_beginning\cf2 ()\
+		
+\b set
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  \{\cf3 indentText\cf2 :\cf3 a_indent_text\cf2 , \cf3 blockText\cf2 :\cf3 a_block_text\cf2 , \cf3 originalText\cf2 :\cf3 a_line\cf2 , \cf3 lineKind\cf2 :
+\i \cf5 missing value
+\i0 \cf2 , \cf3 indentLevel\cf2 :-1\}\
+		\
+		
+\b if
+\b0  \cf3 a_block_text\cf2 's \cf3 equal_to\cf2 ("") 
+\b then
+\b0 \
+			
+\b set
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  "empty"\
+			\cf3 calc_indent_level\cf2 (\cf3 line_record\cf2 )\
+		
+\b else
+\b0 \
+			
+\b set
+\b0  \cf3 line_record\cf2  
+\b to
+\b0  \cf3 check_line_type\cf2 (\cf3 line_record\cf2 )\
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  
+\b if
+\b0 \
+	\
+	
+\b return
+\b0  \cf3 line_record\cf2 \
+
+\b end
+\b0  \cf3 parse_line\cf2 \
+\
+
+\b on
+\b0  \cf3 parse_heading\cf2 (\cf3 a_line\cf2 )\
+	
+\b set
+\b0  \cf3 h_level\cf2  
+\b to
+\b0  1\
+	
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 a_line\cf2 's \cf3 text_in_range\cf2 (2, -1)\
+	
+\b repeat
+\b0  
+\b while
+\b0  (\cf3 a_text\cf2 's \cf3 starts_with\cf2 ("="))\
+		
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  \cf3 a_text\cf2 's \cf3 text_in_range\cf2 (2, -1)\
+		
+\b set
+\b0  \cf3 h_level\cf2  
+\b to
+\b0  \cf3 h_level\cf2  + 1\
+	
+\b end
+\b0  
+\b repeat
+\b0 \
+	
+\b set
+\b0  \{\cf3 dummy\cf2 , \cf3 a_text\cf2 \} 
+\b to
+\b0  \cf3 a_text\cf2 's \cf3 strip_beginning\cf2 ()\
+	\
+	
+\b script
+\b0  \cf3 headingContext\cf2 \
+		
+\b property
+\b0  \cf3 context\cf2  : "heading"\
+		
+\b property
+\b0  \cf3 level\cf2  : \cf3 h_level\cf2 \
+		
+\b property
+\b0  \cf7 contents\cf2  : \cf3 a_text\cf2 \
+		\
+		
+\b on
+\b0  \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+			
+\b return
+\b0  \cf3 formatter\cf2 's \cf3 format_heading\cf2 (
+\b a reference
+\b0  
+\b to
+\b0  
+\b me
+\b0 )\
+		
+\b end
+\b0  \cf3 convert\cf2 \
+	
+\b end
+\b0  
+\b script
+\b0 \
+	\
+	
+\b return
+\b0  \cf3 headingContext\cf2 \
+
+\b end
+\b0  \cf3 parse_heading\cf2 \
+\
+
+\b script
+\b0  \cf3 ListContainer\cf2 \
+	
+\b property
+\b0  \cf3 context\cf2  : "list container"\
+	\
+	
+\b on
+\b0  \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+		
+\b return
+\b0  \cf3 formatter\cf2 's \cf3 format_list\cf2 (
+\b me
+\b0 )\
+	
+\b end
+\b0  \cf3 convert\cf2 \
+	\
+	
+\b on
+\b0  \cf3 add_member\cf2 (\cf3 an_item\cf2 )\
+		
+\b my
+\b0  \cf3 _members\cf2 's \cf3 push\cf2 (\cf3 an_item\cf2 )\
+	
+\b end
+\b0  \cf3 add_member\cf2 \
+	\
+	
+\b on
+\b0  \cf3 add_to_buffer\cf2 (\cf3 an_item\cf2 )\
+		
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  
+\b my
+\b0  \cf3 _buffer\cf2  
+\b to
+\b0  \cf3 an_item\cf2 \
+	
+\b end
+\b0  \cf3 add_to_buffer\cf2 \
+	\
+	
+\b on
+\b0  \cf3 close_buffer\cf2 ()\
+		
+\b if
+\b0  
+\b my
+\b0  \cf3 _buffer\cf2  
+\b is
+\b0  
+\b not
+\b0  \{\} 
+\b then
+\b0 \
+			
+\b my
+\b0  \cf3 _members\cf2 's \cf3 push\cf2 (
+\b my
+\b0  \cf3 ListItem\cf2 's \cf3 make_with\cf2 (
+\b my
+\b0  \cf3 _buffer\cf2 , 
+\b me
+\b0 ))\
+			
+\b set
+\b0  
+\b my
+\b0  \cf3 _buffer\cf2  
+\b to
+\b0  \{\}\
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  \cf3 close_buffer\cf2 \
+	\
+	
+\b on
+\b0  \cf3 parse_no_listcontext\cf2 (\cf3 a_record\cf2 , \cf3 iterator\cf2 )\
+		
+\b set
+\b0  \cf3 a_kind\cf2  
+\b to
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 a_record\cf2 \
+		
+\b set
+\b0  \cf3 indent_level\cf2  
+\b to
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 a_record\cf2 \
+		
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  "verbatim" 
+\b then
+\b0 \
+			
+\b set
+\b0  \cf3 nonlist_context\cf2  
+\b to
+\b0  \cf3 make_verbatim_context\cf2 (\{\cf3 a_record\cf2 \})\
+		
+\b else
+\b0 \
+			
+\b error
+\b0  "Invalid context is in list context" \cf5 number\cf2  920\
+		
+\b end
+\b0  
+\b if
+\b0 \
+		\
+		
+\b repeat
+\b0  
+\b while
+\b0  (\cf3 iterator\cf2 's \cf3 has_next\cf2 ())\
+			
+\b set
+\b0  \cf3 a_record\cf2  
+\b to
+\b0  \cf3 iterator\cf2 's \cf3 next\cf2 ()\
+			
+\b if
+\b0  (\cf3 a_kind\cf2  
+\b is
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 a_record\cf2 ) 
+\b then
+\b0 \
+				\cf3 nonlist_context\cf2 's \cf3 push\cf2 (\cf3 a_record\cf2 )\
+			
+\b else
+\b0 \
+				\cf3 iterator\cf2 's \cf3 decrement_index\cf2 ()\
+				
+\b exit
+\b0  
+\b repeat
+\b0 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		
+\b if
+\b0  \cf3 indent_level\cf2  > 
+\b my
+\b0  \cf3 _indentLevel\cf2  
+\b then
+\b0 \
+			
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\b me
+\b0 \
+			\cf3 add_to_buffer\cf2 (\cf3 nonlist_context\cf2 )\
+		
+\b else
+\b0  
+\b if
+\b0  \cf3 indent_level\cf2  < 
+\b my
+\b0  \cf3 _indentLevel\cf2  
+\b then
+\b0 \
+			\cf3 close_buffer\cf2 ()\
+			\
+			
+\b if
+\b0  \cf3 indent_level\cf2  > 
+\b my
+\b0  \cf3 _parentItem\cf2 's \cf3 _indentLevel\cf2  
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\b me
+\b0 \
+				\cf3 close_buffer\cf2 ()\
+				\cf3 add_member\cf2 (\cf3 nonlist_context\cf2 )\
+			
+\b else
+\b0 \
+				
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 _parentItem\cf2 \
+				
+\b my
+\b0  \cf3 _parentItem\cf2 's \cf3 add_member\cf2 (\cf3 nonlist_context\cf2 )\
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b else
+\b0 \
+			\cf3 close_buffer\cf2 ()\
+			
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\b me
+\b0 \
+			\cf3 add_member\cf2 (\cf3 nonlist_context\cf2 )\
+		
+\b end
+\b0  
+\b if
+\b0 \
+		\
+		
+\b return
+\b0  \cf3 a_result\cf2 \
+	
+\b end
+\b0  \cf3 parse_no_listcontext\cf2 \
+	\
+	
+\b on
+\b0  \cf3 parse_record\cf2 (\cf3 iterator\cf2 )\
+		
+\b set
+\b0  \cf3 a_record\cf2  
+\b to
+\b0  \cf3 iterator\cf2 's \cf3 next\cf2 ()\
+		
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\b me
+\b0 \
+		
+\b set
+\b0  \cf3 a_kind\cf2  
+\b to
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 a_record\cf2 \
+		
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  "cline" 
+\b then
+\b0 \
+			\cf3 add_to_buffer\cf2 (\cf3 originalText\cf2  
+\b of
+\b0  \cf3 a_record\cf2 )\
+		
+\b else
+\b0 \
+			
+\b set
+\b0  \cf3 is_list_item\cf2  
+\b to
+\b0  (\cf3 a_kind\cf2  
+\b is
+\b0  
+\b in
+\b0  \{"itemize", "enumerate"\})\
+			
+\b if
+\b0  
+\b not
+\b0  \cf3 is_list_item\cf2  
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 a_context\cf2  
+\b to
+\b0  \cf3 parse_no_listcontext\cf2 (\cf3 a_record\cf2 , \cf3 iterator\cf2 )\
+				
+\b return
+\b0  \cf3 a_context\cf2 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+			\
+			
+\b if
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 a_record\cf2  < 
+\b my
+\b0  \cf3 _indentLevel\cf2  
+\b then
+\b0 \
+				\cf3 close_buffer\cf2 ()\
+				\cf3 iterator\cf2 's \cf3 decrement_index\cf2 ()\
+				
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 _parentItem\cf2 's \cf3 parse_record\cf2 (\cf3 iterator\cf2 )\
+			
+\b else
+\b0  
+\b if
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 a_record\cf2  > 
+\b my
+\b0  \cf3 _indentLevel\cf2  
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  \cf3 ListContainer\cf2 's \cf3 make_with\cf2 (\cf3 a_record\cf2 , 
+\b me
+\b0 )\
+				\cf3 add_to_buffer\cf2 (\cf3 a_result\cf2 )\
+			
+\b else
+\b0 \
+				
+\b if
+\b0  \cf3 a_kind\cf2  
+\b is
+\b0  
+\b not
+\b0  
+\b my
+\b0  \cf3 _kind\cf2  
+\b then
+\b0 \
+					\cf3 close_buffer\cf2 ()\
+					\cf3 iterator\cf2 's \cf3 decrement_index\cf2 ()\
+					
+\b set
+\b0  \cf3 a_result\cf2  
+\b to
+\b0  
+\i \cf5 missing value
+\i0 \cf2 \
+				
+\b else
+\b0 \
+					\cf3 close_buffer\cf2 ()\
+					\cf3 add_to_buffer\cf2 (\cf3 a_record\cf2 's \cf3 blockText\cf2 )\
+				
+\b end
+\b0  
+\b if
+\b0 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b if
+\b0 \
+		\
+		
+\b return
+\b0  \cf3 a_result\cf2 \
+	
+\b end
+\b0  \cf3 parse_record\cf2 \
+	\
+	
+\b on
+\b0  \cf3 close_all_buffer\cf2 ()\
+		\cf3 close_buffer\cf2 ()\
+		
+\b if
+\b0  
+\b my
+\b0  \cf3 _parentItem\cf2  
+\b is
+\b0  
+\b not
+\b0  
+\i \cf5 missing value
+\i0 \cf2  
+\b then
+\b0 \
+			
+\b my
+\b0  \cf3 _parentItem\cf2 's \cf3 close_all_buffer\cf2 ()\
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  \cf3 close_all_buffer\cf2 \
+	\
+	
+\b on
+\b0  \cf3 indent_text\cf2 ()\
+		
+\b return
+\b0  
+\b my
+\b0  \cf3 _indentText\cf2 \
+	
+\b end
+\b0  \cf3 indent_text\cf2 \
+	\
+	
+\b on
+\b0  \cf3 list_kind\cf2 ()\
+		
+\b return
+\b0  
+\b my
+\b0  \cf3 _kind\cf2 \
+	
+\b end
+\b0  \cf3 list_kind\cf2 \
+	\
+	
+\b on
+\b0  \cf3 members\cf2 ()\
+		
+\b return
+\b0  
+\b my
+\b0  \cf3 _members\cf2 \
+	
+\b end
+\b0  \cf3 members\cf2 \
+	\
+	
+\b on
+\b0  \cf3 make_with\cf2 (\cf3 list_record\cf2 , \cf3 parent_item\cf2 )\
+		
+\b script
+\b0  \cf3 ListContainerCore\cf2 \
+			
+\b property
+\b0  \cf3 _kind\cf2  : \cf3 list_record\cf2 's \cf3 lineKind\cf2 \
+			
+\b property
+\b0  \cf3 _indentLevel\cf2  : \cf3 list_record\cf2 's \cf3 indentLevel\cf2 \
+			
+\b property
+\b0  \cf3 _indentText\cf2  : \cf3 list_record\cf2 's \cf3 indentText\cf2 \
+			
+\b property
+\b0  \cf3 _members\cf2  : 
+\b \cf5 make
+\b0 \cf2  \cf3 XList\cf2 \
+			
+\b property
+\b0  \cf3 _buffer\cf2  : \{\cf3 list_record\cf2 's \cf3 blockText\cf2 \}\
+			
+\b property
+\b0  \cf3 _parentItem\cf2  : \cf3 parent_item\cf2 \
+			
+\b property
+\b0  \cf3 _is_list_item_context\cf2  : \cf8 true\cf2 \
+			
+\b property
+\b0  \cf3 _context\cf2  : ""\
+		
+\b end
+\b0  
+\b script
+\b0 \
+		\
+		
+\b return
+\b0  \cf3 ListContainerCore\cf2 \
+	
+\b end
+\b0  \cf3 make_with\cf2 \
+
+\b end
+\b0  
+\b script
+\b0 \
+\
+
+\b script
+\b0  \cf3 ListItem\cf2 \
+	
+\b on
+\b0  \cf3 push\cf2 (\cf3 an_item\cf2 )\
+		
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  
+\b my
+\b0  \cf3 _members\cf2  
+\b to
+\b0  \cf3 an_item\cf2 \
+	
+\b end
+\b0  \cf3 push\cf2 \
+	\
+	
+\b on
+\b0  \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+		\cf6 --log "start convert in ListItem"\cf2 \
+		
+\b set
+\b0  \cf3 indent_text\cf2  
+\b to
+\b0  
+\b my
+\b0  \cf3 _container\cf2 's \cf3 indent_text\cf2 ()\
+		
+\b return
+\b0  \cf3 formatter\cf2 's \cf3 format_list_item\cf2 (
+\b my
+\b0  \cf3 _members\cf2 , \cf3 indent_text\cf2 )\
+	
+\b end
+\b0  \cf3 convert\cf2 \
+	\
+	
+\b on
+\b0  \cf3 make_with\cf2 (\cf3 a_list\cf2 , \cf3 a_container\cf2 )\
+		
+\b script
+\b0  \cf3 ListItemCore\cf2 \
+			
+\b property
+\b0  \cf7 name\cf2  : "ListItem"\
+			
+\b property
+\b0  \cf3 _members\cf2  : \cf3 a_list\cf2 \
+			
+\b property
+\b0  \cf3 _container\cf2  : \cf3 a_container\cf2 \
+		
+\b end
+\b0  
+\b script
+\b0 \
+		
+\b return
+\b0  \cf3 ListItemCore\cf2 \
+	
+\b end
+\b0  \cf3 make_with\cf2 \
+
+\b end
+\b0  
+\b script
+\b0 \
+\
+
+\b script
+\b0  \cf3 ListContext\cf2 \
+	
+\b on
+\b0  \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+		\cf6 --log "start convert in ListContext"\cf2 \
+		
+\b set
+\b0  \cf3 output\cf2  
+\b to
+\b0  \{\}\
+		
+\b repeat
+\b0  
+\b with
+\b0  \cf3 an_item\cf2  
+\b in
+\b0  
+\b my
+\b0  \cf3 _contents\cf2  \cf6 -- 
+\f1 \'82\'c8\'82\'f1\'82\'c5
+\f0  _contents 
+\f1 \'82\'cd
+\f0  list 
+\f1 \'82\'c8\'82\'cc
+\f0 \cf2 \
+			
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 output\cf2  
+\b to
+\b0  \cf3 an_item\cf2 's \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		
+\b return
+\b0  \cf3 output\cf2 \
+	
+\b end
+\b0  \cf3 convert\cf2 \
+	\
+	
+\b on
+\b0  \cf3 make_with\cf2 (\cf3 record_list\cf2 )\
+		
+\b set
+\b0  \cf3 iterator\cf2  
+\b to
+\b0  \cf3 XList\cf2 's \cf3 make_with\cf2 (\cf3 record_list\cf2 )\
+		
+\b set
+\b0  \cf3 current_list\cf2  
+\b to
+\b0  \cf3 ListContainer\cf2 's \cf3 make_with\cf2 (\cf3 iterator\cf2 's \cf3 next\cf2 (), 
+\i \cf5 missing value
+\i0 \cf2 )\
+		
+\b set
+\b0  \cf3 root_list\cf2  
+\b to
+\b0  \{\cf3 current_list\cf2 \} \cf6 -- 
+\f1 \'82\'c8\'82\'ba\'81\'41
+\f0 list 
+\f1 \'82\'c9\'82\'b5\'82\'c8\'82\'af\'82\'ea\'82\'ce\'82\'c8\'82\'e7\'82\'c8\'82\'a2\'81\'48
+\f0  ans:
+\f1 \'83\'5e\'83\'43\'83\'76\'82\'cc\'88\'e1\'82\'a4
+\f0 list
+\f1 \'97\'76\'91\'66\'82\'aa\'98\'41\'91\'b1\'82\'b5\'82\'c4\'82\'a2\'82\'e9\'8f\'ea\'8d\'87\'81\'41\'95\'aa\'8a\'84\'82\'b7\'82\'e9\'88\'d7
+\f0 \cf2 \
+		
+\b repeat
+\b0  
+\b while
+\b0  \cf3 iterator\cf2 's \cf3 has_next\cf2 ()\
+			
+\b set
+\b0  \cf3 current_list\cf2  
+\b to
+\b0  \cf3 current_list\cf2 's \cf3 parse_record\cf2 (\cf3 iterator\cf2 ) \cf6 -- 
+\f1 \'82\'a2\'82\'c2
+\f0  missing value 
+\f1 \'82\'aa\'82\'a9\'82\'a6\'82\'c1\'82\'c4\'82\'ad\'82\'e9\'81\'48
+\f0 : ol 
+\f1 \'82\'c6
+\f0  ul 
+\f1 \'82\'aa\'93\'af\'82\'b6\'83\'8c\'83\'78\'83\'8b\'82\'c5\'98\'41\'91\'b1\'82\'b5\'82\'c4\'82\'a2\'82\'e9\'8e\'9e
+\f0 \cf2 \
+			
+\b if
+\b0  \cf3 current_list\cf2  
+\b is
+\b0  
+\i \cf5 missing value
+\i0 \cf2  
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 next_item\cf2  
+\b to
+\b0  \cf3 iterator\cf2 's \cf3 next\cf2 ()\
+				
+\b if
+\b0  \cf3 next_item\cf2  
+\b is
+\b0  
+\i \cf5 missing value
+\i0 \cf2  
+\b then
+\b0  
+\b exit
+\b0  
+\b repeat
+\b0 \
+				
+\b set
+\b0  \cf3 current_list\cf2  
+\b to
+\b0  \cf3 ListContainer\cf2 's \cf3 make_with\cf2 (\cf3 next_item\cf2 , 
+\i \cf5 missing value
+\i0 \cf2 )\
+				
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 root_list\cf2  
+\b to
+\b0  \cf3 current_list\cf2 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b repeat
+\b0 \
+		\
+		\cf3 current_list\cf2 's \cf3 close_all_buffer\cf2 ()\
+		\
+		
+\b script
+\b0  \cf3 ListContextCore\cf2 \
+			
+\b property
+\b0  \cf3 context\cf2  : "list"\
+			
+\b property
+\b0  \cf3 _contents\cf2  : \cf3 root_list\cf2 \
+		
+\b end
+\b0  
+\b script
+\b0 \
+		
+\b return
+\b0  \cf3 ListContextCore\cf2 \
+	
+\b end
+\b0  \cf3 make_with\cf2 \
+
+\b end
+\b0  
+\b script
+\b0 \
+\
+
+\b on
+\b0  \cf3 make_verbatim_context\cf2 (\cf3 a_list\cf2 )\
+	
+\b script
+\b0  \cf3 VerbatimContext\cf2 \
+		
+\b property
+\b0  \cf3 context\cf2  : "vebatim"\
+		
+\b property
+\b0  \cf3 _contents\cf2  : \cf3 a_list\cf2 \
+		\
+		
+\b on
+\b0  \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+			
+\b return
+\b0  \cf3 formatter\cf2 's \cf3 format_verbatim\cf2 (
+\b my
+\b0  \cf3 _contents\cf2 )\
+		
+\b end
+\b0  \cf3 convert\cf2 \
+		\
+		
+\b on
+\b0  \cf3 push\cf2 (\cf3 an_item\cf2 )\
+			
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 _contents\cf2  
+\b to
+\b0  \cf3 an_item\cf2 \
+		
+\b end
+\b0  \cf3 push\cf2 \
+	
+\b end
+\b0  
+\b script
+\b0 \
+	\
+	
+\b return
+\b0  \cf3 VerbatimContext\cf2 \
+
+\b end
+\b0  \cf3 make_verbatim_context\cf2 \
+\
+
+\b on
+\b0  \cf3 make_paragraph_context\cf2 (\cf3 a_list\cf2 )\
+	
+\b script
+\b0  \cf3 ParagraphContext\cf2 \
+		
+\b property
+\b0  \cf3 context\cf2  : "paragraph"\
+		
+\b property
+\b0  \cf3 _contents\cf2  : \cf3 a_list\cf2 \
+		\
+		
+\b on
+\b0  \cf3 convert\cf2 (\cf3 formatter\cf2 )\
+			
+\b return
+\b0  \cf3 formatter\cf2 's \cf3 format_paragraphs\cf2 (
+\b my
+\b0  \cf3 _contents\cf2 )\
+		
+\b end
+\b0  \cf3 convert\cf2 \
+		\
+		
+\b on
+\b0  \cf3 push\cf2 (\cf3 an_item\cf2 )\
+			
+\b if
+\b0  
+\i \cf5 class
+\i0 \cf2  
+\b of
+\b0  \cf3 an_item\cf2  
+\b is
+\b0  
+\i \cf5 list
+\i0 \cf2  
+\b then
+\b0 \
+				
+\b my
+\b0  \cf3 _contents\cf2 's \cf3 add_from_list\cf2 (\cf3 an_item\cf2 )\
+			
+\b else
+\b0 \
+				
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  
+\b my
+\b0  \cf3 _contents\cf2  
+\b to
+\b0  \cf3 an_item\cf2 \
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  \cf3 push\cf2 \
+	
+\b end
+\b0  
+\b script
+\b0 \
+	\
+	
+\b return
+\b0  \cf3 ParagraphContext\cf2 \
+
+\b end
+\b0  \cf3 make_paragraph_context\cf2 \
+\
+
+\b on
+\b0  \cf3 parse_context\cf2 (\cf3 iterator\cf2 )\
+	\cf6 --log "start parse_context"\cf2 \
+	
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "paragraph"\
+	\
+	
+\b script
+\b0  \cf3 ContextContainer\cf2 \
+		
+\b property
+\b0  \cf3 _context_list\cf2  : \{\}\
+		
+\b property
+\b0  \cf3 _buffer\cf2  : \{\}\
+		\
+		
+\b on
+\b0  \cf3 close_context\cf2 ()\
+			
+\b if
+\b0  \cf3 _buffer\cf2  
+\b is
+\b0  \{\} 
+\b then
+\b0  
+\b return
+\b0 \
+			\
+			
+\b if
+\b0  \cf3 current_context\cf2  
+\b is
+\b0  "paragraph" 
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 context_obj\cf2  
+\b to
+\b0  \cf3 make_paragraph_context\cf2 (\cf3 _buffer\cf2 )\
+			
+\b else
+\b0  
+\b if
+\b0  \cf3 current_context\cf2  
+\b is
+\b0  "list" 
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 context_obj\cf2  
+\b to
+\b0  \cf3 ListContext\cf2 's \cf3 make_with\cf2 (\cf3 _buffer\cf2 )\
+			
+\b else
+\b0  
+\b if
+\b0  \cf3 current_context\cf2  
+\b is
+\b0  "verbatim" 
+\b then
+\b0 \
+				
+\b set
+\b0  \cf3 context_obj\cf2  
+\b to
+\b0  \cf3 make_verbatim_context\cf2 (\cf3 _buffer\cf2 )\
+			
+\b end
+\b0  
+\b if
+\b0 \
+			\
+			
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 _context_list\cf2  
+\b to
+\b0  \cf3 context_obj\cf2 \
+			
+\b set
+\b0  \cf3 _buffer\cf2  
+\b to
+\b0  \{\}\
+		
+\b end
+\b0  \cf3 close_context\cf2 \
+		\
+		
+\b on
+\b0  \cf3 add_heading_context\cf2 (\cf3 a_line\cf2 )\
+			
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 _context_list\cf2  
+\b to
+\b0  \cf3 parse_heading\cf2 (\cf3 a_line\cf2 )\
+		
+\b end
+\b0  \cf3 add_heading_context\cf2 \
+		\
+		
+\b on
+\b0  \cf3 push\cf2 (\cf3 an_item\cf2 )\
+			
+\b set
+\b0  
+\b end
+\b0  
+\b of
+\b0  \cf3 _buffer\cf2  
+\b to
+\b0  \cf3 an_item\cf2 \
+		
+\b end
+\b0  \cf3 push\cf2 \
+		\
+	
+\b end
+\b0  
+\b script
+\b0 \
+	\
+	
+\b local
+\b0  \cf3 a_line\cf2 \
+	
+\b set
+\b0  \cf3 current_indent_level\cf2  
+\b to
+\b0  0\
+	
+\b repeat
+\b0  
+\b while
+\b0  (\cf3 iterator\cf2 's \cf3 has_next\cf2 ())\
+		
+\b set
+\b0  \cf3 a_line\cf2  
+\b to
+\b0  \cf3 iterator\cf2 's \cf3 next\cf2 ()\
+		\cf6 (*\
+		if a_line is missing value then\
+			ContextContainer's close_context()\
+			exit repeat\
+		end if\
+		*)\cf2 \
+		
+\b local
+\b0  \cf3 line_rec\cf2 \
+		\cf6 --log a_line\cf2 \
+		
+\b if
+\b0  \cf3 a_line\cf2 's \cf3 starts_with\cf2 ("=") 
+\b then
+\b0 \
+			\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+			\cf3 ContextContainer\cf2 's \cf3 add_heading_context\cf2 (\cf3 a_line\cf2 )\
+			
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "paragraph"\
+			
+\b set
+\b0  \cf3 current_indent_level\cf2  
+\b to
+\b0  0\
+		
+\b else
+\b0 \
+			
+\b set
+\b0  \cf3 line_rec\cf2  
+\b to
+\b0  \cf3 parse_line\cf2 (\cf3 a_line\cf2 )\
+			
+\b \cf5 log
+\b0 \cf2  \cf3 line_rec\cf2 \
+			
+\b set
+\b0  \cf3 line_kind\cf2  
+\b to
+\b0  \cf3 line_rec\cf2 's \cf3 lineKind\cf2 \
+			
+\b if
+\b0  (\cf3 current_context\cf2  
+\b is
+\b0  "paragraph") 
+\b then
+\b0 \
+				
+\b if
+\b0  (\cf3 line_kind\cf2  
+\b is
+\b0  
+\b in
+\b0  \{"cline", "empty"\}) 
+\b then
+\b0 \
+					\cf6 --log line_rec\cf2 \
+				
+\b else
+\b0  
+\b if
+\b0  (\cf3 line_kind\cf2  
+\b is
+\b0  "verbatim") 
+\b then
+\b0 \
+					\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+					
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "verbatim"\
+				
+\b else
+\b0 \
+					\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+					
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "list"\
+					
+\b set
+\b0  \cf3 current_indent_level\cf2  
+\b to
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_rec\cf2 \
+				
+\b end
+\b0  
+\b if
+\b0 \
+				\cf3 ContextContainer\cf2 's \cf3 push\cf2 (\cf3 line_rec\cf2 )\
+				\
+			
+\b else
+\b0  
+\b if
+\b0  (\cf3 current_context\cf2  
+\b is
+\b0  "list") 
+\b then
+\b0 \
+				
+\b if
+\b0  (\cf3 line_kind\cf2  
+\b is
+\b0  "empty") 
+\b then
+\b0 \
+					\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+					
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "paragraph"\
+					\
+				
+\b else
+\b0 \
+					
+\b if
+\b0  (\cf3 line_kind\cf2  
+\b is
+\b0  "cline") 
+\b and
+\b0  (\cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_rec\cf2  
+\b is
+\b0  0) 
+\b then
+\b0 \
+						\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+						
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "paragraph"\
+					
+\b end
+\b0  
+\b if
+\b0 \
+					\
+					
+\b if
+\b0  \cf3 line_kind\cf2  
+\b is
+\b0  
+\b in
+\b0  \{"itemize", "enumerate"\} 
+\b then
+\b0 \
+						
+\b set
+\b0  \cf3 current_indent_level\cf2  
+\b to
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_rec\cf2 \
+					
+\b else
+\b0 \
+						
+\b if
+\b0  \cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_rec\cf2  
+\b is
+\b0  \cf3 current_indent_level\cf2  
+\b then
+\b0 \
+							
+\b set
+\b0  \cf3 lineKind\cf2  
+\b of
+\b0  \cf3 line_rec\cf2  
+\b to
+\b0  "cline"\
+						
+\b end
+\b0  
+\b if
+\b0 \
+					
+\b end
+\b0  
+\b if
+\b0 \
+					\cf3 ContextContainer\cf2 's \cf3 push\cf2 (\cf3 line_rec\cf2 )\
+				
+\b end
+\b0  
+\b if
+\b0 \
+				\
+			
+\b else
+\b0  
+\b if
+\b0  (\cf3 current_context\cf2  
+\b is
+\b0  "verbatim") 
+\b then
+\b0 \
+				\cf6 --if (line_kind is not "empty") and (indentLevel of line_rec is 0) then\cf2 \
+				
+\b if
+\b0  (\cf3 indentLevel\cf2  
+\b of
+\b0  \cf3 line_rec\cf2  
+\b is
+\b0  0) 
+\b then
+\b0 \
+					\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+					
+\b if
+\b0  \cf3 line_kind\cf2  
+\b is
+\b0  
+\b in
+\b0  \{"cline", "empty"\} 
+\b then
+\b0 \
+						
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "paragraph"\
+					
+\b else
+\b0 \
+						
+\b set
+\b0  \cf3 current_context\cf2  
+\b to
+\b0  "list"\
+					
+\b end
+\b0  
+\b if
+\b0 \
+				
+\b end
+\b0  
+\b if
+\b0 \
+				\cf3 ContextContainer\cf2 's \cf3 push\cf2 (\cf3 line_rec\cf2 )\
+			
+\b end
+\b0  
+\b if
+\b0 \
+		
+\b end
+\b0  
+\b if
+\b0 \
+	
+\b end
+\b0  
+\b repeat
+\b0 \
+	\cf3 ContextContainer\cf2 's \cf3 close_context\cf2 ()\
+	\cf6 --log "end parse_context"\cf2 \
+	
+\b return
+\b0  \cf3 ContextContainer\cf2 's \cf3 _context_list\cf2 \
+
+\b end
+\b0  \cf3 parse_context\cf2 \
+\
+\cf6 (*! @group constructor *)\cf2 \
+\
+\cf6 (*!\
+@abstruct 
+\f1 \'83\'65\'83\'4c\'83\'58\'83\'67\'82\'f0
+\f0  RD 
+\f1 \'82\'c6\'82\'b5\'82\'c4\'83\'70\'81\'5b\'83\'58\'82\'b5\'82\'dc\'82\'b7\'81\'42
+\f0 \
+@param a_text\
+@result Instance of SimpleRD\
+*)\cf2 \
+
+\b on
+\b0  \cf3 make_with_text\cf2 (\cf3 a_text\cf2 )\
+	
+\b return
+\b0  \cf3 make_with\cf2 (
+\b every
+\b0  
+\i \cf5 paragraph
+\i0 \cf2  
+\b of
+\b0  \cf3 a_text\cf2 )\
+
+\b end
+\b0  \cf3 make_with_text\cf2 \
+\
+\cf6 (*!\
+@abstruct 
+\f1 \'83\'65\'83\'4c\'83\'58\'83\'67\'82\'cc\'8d\'73\'82\'cc\'83\'8a\'83\'58\'83\'67\'82\'f0
+\f0  RD 
+\f1 \'82\'c6\'82\'b5\'82\'c4\'83\'70\'81\'5b\'83\'58\'82\'b5\'82\'dc\'82\'b7\'81\'42
+\f0 \
+@param a_list (list of paragraphs)\
+@result Instance of SimpleRD\
+*)\cf2 \
+
+\b on
+\b0  \cf3 make_with\cf2 (\cf3 a_list\cf2 )\
+	\cf6 --log "start make_with"\cf2 \
+	\cf6 --log a_list\cf2 \
+	
+\b set
+\b0  \cf3 an_iterator\cf2  
+\b to
+\b0  \cf3 XList\cf2 's \cf3 make_with\cf2 (\cf3 a_list\cf2 )\
+	
+\b script
+\b0  \cf3 XTextBoxing\cf2 \
+		
+\b on
+\b0  \cf3 do\cf2 (\cf3 a_line\cf2 )\
+			
+\b set
+\b0  \cf7 contents\cf2  
+\b of
+\b0  \cf3 a_line\cf2  
+\b to
+\b0  \cf3 XText\cf2 's \cf3 make_with\cf2 (\cf7 contents\cf2  
+\b of
+\b0  \cf3 a_line\cf2 )\
+			
+\b return
+\b0  \cf8 true\cf2 \
+		
+\b end
+\b0  \cf3 do\cf2 \
+	
+\b end
+\b0  
+\b script
+\b0 \
+	\cf3 an_iterator\cf2 's \cf3 each\cf2 (\cf3 XTextBoxing\cf2 )\
+	\
+	
+\b return
+\b0  \cf3 make_with_iterator\cf2 (\cf3 an_iterator\cf2 )\
+
+\b end
+\b0  \cf3 make_with\cf2 \
+\
+
+\b on
+\b0  \cf3 formatter\cf2 ()\
+	
+\b return
+\b0  
+\b my
+\b0  \cf3 _formatter\cf2 \
+
+\b end
+\b0  \cf3 formatter\cf2 \
+\
+
+\b on
+\b0  \cf3 make_with_iterator\cf2 (\cf3 an_iterator\cf2 )\
+	\
+	
+\b script
+\b0  \cf3 SimpleRD\cf2 \
+		
+\b property
+\b0  \cf3 _contextList\cf2  : 
+\i \cf5 missing value
+\i0 \cf2 \
+		
+\b property
+\b0  \cf3 _formatter\cf2  : 
+\b my
+\b0  \cf3 _formatter\cf2 \
+	
+\b end
+\b0  
+\b script
+\b0 \
+	
+\b set
+\b0  \cf3 SimpleRD\cf2 's \cf3 _contextList\cf2  
+\b to
+\b0  \cf3 parse_context\cf2 (\cf3 an_iterator\cf2 , \cf3 SimpleRD\cf2 )\
+	
+\b return
+\b0  \cf3 SimpleRD\cf2 \
+
+\b end
+\b0  \cf3 make_with_iterator\cf2 \
+\
+\cf6 --global srd\cf2 \
+
+\b on
+\b0  \cf3 debug\cf2 ()\
+	\cf6 --set srd to make_with(\{"string", "", "	\'a5"key1 -> Value1 ", "	key2 -> Value2", "	.......\'a5"", " ", "
+\f1 \'82\'c6\'82\'a2\'82\'a4\'83\'74\'83\'48\'81\'5b\'83\'7d\'83\'62\'83\'67\'82\'c5\'83\'4c\'81\'5b\'92\'6c\'82\'c6\'91\'ce\'89\'9e\'82\'b7\'82\'e9\'92\'6c\'82\'cc\'88\'ea\'97\'97\'82\'f0\'95\'b6\'8e\'9a\'97\'f1\'82\'c9\'82\'b3\'82\'ea\'82\'bd\'95\'a8\'82\'aa\'95\'d4\'82\'b3\'82\'ea\'82\'dc\'82\'b7\'81\'42
+\f0 "\})\cf2 \
+	\cf6 --set srd to make_with(\{"hello"\})\cf2 \
+	\
+	\cf6 (*	\
+	set a_text to "= head1\
+== head2\
+(1)aaa\
+	* bbb\
+(2)ccc\
+aaa\
+	pre\
+	pre"\
+*)\cf2 \
+	\cf6 (*	\
+	set a_text to "(2)ccc\
+aaa"\
+*)\cf2 \
+	
+\b set
+\b0  \cf3 loader\cf2  
+\b to
+\b0  
+\b \cf4 boot
+\b0 \cf2  (
+\b \cf4 module loader
+\b0 \cf2 ) \cf4 for\cf2  
+\b me
+\b0 \
+	\cf6 --return\cf2 \
+	\cf6 (*\
+	set a_text to "* run 
+\f1 \'83\'6e\'83\'93\'83\'68\'83\'89\'82\'c8\'82\'c7\'82\'c5
+\f0  boot 
+\f1 \'83\'52\'83\'7d\'83\'93\'83\'68\'82\'f0\'8e\'c0\'8d\'73\'82\'b7\'82\'e9\'82\'b1\'82\'c6\'82\'c9\'82\'e6\'82\'c1\'82\'c4\'81\'41\'8e\'c0\'8d\'73\'8e\'9e\'82\'c9\'83\'82\'83\'57\'83\'85\'81\'5b\'83\'8b\'82\'f0\'83\'8d\'81\'5b\'83\'68\'82\'b5\'82\'dc\'82\'b7\'81\'42
+\f0 \
+* 
+\f1 \'8f\'ed\'82\'c9\'81\'41\'8d\'c5\'90\'56\'82\'cc\'83\'82\'83\'57\'83\'85\'81\'5b\'83\'8b\'82\'f0\'8e\'67\'82\'a4\'82\'b1\'82\'c6\'82\'aa\'82\'c5\'82\'ab\'82\'e9\'83\'81\'83\'8a\'83\'62\'83\'67\'82\'aa\'82\'a0\'82\'e8\'82\'dc\'82\'b7\'81\'42
+\f0 "\
+*)\cf2 \
+	
+\b set
+\b0  \cf3 a_text\cf2  
+\b to
+\b0  "* 111\
+	* 222\
+   (1) 333"\
+	
+\b set
+\b0  \cf3 srd\cf2  
+\b to
+\b0  \cf3 make_with_text\cf2 (\cf3 a_text\cf2 )\
+	\cf6 --set a_xlist to XList's make_with(every paragraph of a_text)\cf2 \
+	\cf6 --set a_xlist to XText's make_with(a_text)'s as_xlist_with(return)\cf2 \
+	\cf6 --set srd to make_with_iterator(a_xlist)\cf2 \
+	\cf6 --log srd's as_xhtml()\cf2 \
+	\cf6 --log srd's html_elememt()'s as_html()\cf2 \
+	\
+	
+\b return
+\b0  \cf3 srd\cf2 's \cf3 html_elememt\cf2 ()'s \cf3 as_html\cf2 ()\
+
+\b end
+\b0  \cf3 debug\cf2 \
+\
+
+\b on
+\b0  
+\b \cf5 run
+\b0 \cf2 \
+	
+\b return
+\b0  \cf3 debug\cf2 ()\
+
+\b end
+\b0  
+\b \cf5 run
+\b0 \cf2 \
+\
+
+\b on
+\b0  \cf3 use_xhtml\cf2 ()\
+	
+\b set
+\b0  
+\b my
+\b0  \cf3 _formatter\cf2  
+\b to
+\b0  \cf3 XHTMLFormatter\cf2 \
+
+\b end
+\b0  \cf3 use_xhtml\cf2 \
+\
+
+\b on
+\b0  \cf3 use_html\cf2 ()\
+	
+\b set
+\b0  
+\b my
+\b0  \cf3 _formatter\cf2  
+\b to
+\b0  \cf3 HTMLFormatter\cf2 \
+
+\b end
+\b0  \cf3 use_html\cf2 \
+\
+
+\b on
+\b0  \cf3 as_xhtml\cf2 ()\
+	
+\b return
+\b0  \cf3 perform_convert\cf2 (\cf3 XHTMLFormatter\cf2 )\
+
+\b end
+\b0  \cf3 as_xhtml\cf2 \
+\
+
+\b on
+\b0  \cf3 as_html\cf2 ()\
+	
+\b return
+\b0  \cf3 perform_convert\cf2 (\cf3 HTMLFormatter\cf2 )\
+
+\b end
+\b0  \cf3 as_html\cf2 \
+\
+
+\b on
+\b0  \cf3 html_elememt\cf2 ()\
+	
+\b \cf5 log
+\b0 \cf2  "start html_elememt in SimpleRD"\
+	
+\b set
+\b0  \cf3 output\cf2  
+\b to
+\b0  
+\b \cf5 make
+\b0 \cf2  \cf3 HTMLElement\cf2 \
+	
+\b repeat
+\b0  
+\b with
+\b0  \cf3 obj\cf2  
+\b in
+\b0  
+\b my
+\b0  \cf3 _contextList\cf2 \
+		\cf6 --return obj's convert(HTMLElementFormatter)\cf2 \
+		\cf3 output\cf2 's \cf3 push\cf2 (\cf3 obj\cf2 's \cf3 convert\cf2 (\cf3 HTMLElementFormatter\cf2 ))\
+	
+\b end
+\b0  
+\b repeat
+\b0 \
+	
+\b return
+\b0  \cf3 output\cf2 \
+
+\b end
+\b0  \cf3 html_elememt\cf2 \
+\
+
+\b on
+\b0  \cf3 perform_convert\cf2 (\cf3 formatter\cf2 )\
+	
+\b \cf5 log
+\b0 \cf2  "start perform_convert in SimpleRD"\
+	
+\b set
+\b0  \cf3 output\cf2  
+\b to
+\b0  
+\b \cf5 make
+\b0 \cf2  \cf3 XList\cf2 \
+	
+\b repeat
+\b0  
+\b with
+\b0  \cf3 obj\cf2  
+\b in
+\b0  
+\b my
+\b0  \cf3 _contextList\cf2 \
+		\cf3 output\cf2 's \cf3 push\cf2 (\cf3 obj\cf2 's \cf3 convert\cf2 (\cf3 formatter\cf2 ))\
+	
+\b end
+\b0  
+\b repeat
+\b0 \
+	\cf6 --log output's _contents\cf2 \
+	
+\b return
+\b0  \cf3 output\cf2 's \cf3 as_unicode_with\cf2 (\cf3 _line_end\cf2 )\
+
+\b end
+\b0  \cf3 perform_convert\cf2 \
+}
